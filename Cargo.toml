@@ -5,6 +5,7 @@ members = [
 ]
 exclude = [
     "examples/gen_fields_demo",
+    "examples/gen_select_demo"
     # 其他要排除的包
 ]
 resolver = "2"
