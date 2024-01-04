@@ -1,4 +1,3 @@
-
 /// `FieldsAttributeMacro` trait 定义了处理字段属性宏的功能。
 ///
 /// 这个 trait 主要用于解析和处理 `#[fields(...)]` 属性宏，该宏用于
@@ -50,7 +49,7 @@ pub trait SelectAttributeMacro {
 /// 这个 trait 主要用于解析和处理 `#[values(...)]` 属性宏，该宏用于
 /// 定制 SQL 语句中的字段部分。通过实现这个 trait，可以根据结构体
 /// 字段上的 `#[values]` 宏指定的参数生成对应的字段列表。
-pub  trait ValuesAttributeMacro {
+pub trait ValuesAttributeMacro {
     /// 解析 `#[values(...)]` 属性宏，并生成字段列表。
     ///
     /// 此方法会分析结构体字段上的 `#[values]` 宏参数，如 `ignore` 和  `index`
@@ -109,5 +108,5 @@ pub trait SetAttributeMacro {
     /// 如果想要使用好的自定义方法，应该使用 `GenWhere` 宏， 并使用 `ignore` 忽略指定值
     fn generate_where_clause() -> Vec<String>;
     /// 返回最终的索引号
-    fn  last_param_index() -> usize;
+    fn last_param_index() -> usize;
 }
