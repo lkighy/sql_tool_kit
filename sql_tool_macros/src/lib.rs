@@ -3,6 +3,8 @@ use proc_macro::TokenStream;
 mod fields;
 mod select;
 mod values;
+mod where_macro;
+mod macro_utils;
 
 /// 过程宏入口点，用于处理 `#[field(...)]` 属性宏。
 ///
@@ -128,4 +130,9 @@ pub fn select_attribute_macro(item: TokenStream) -> TokenStream {
 #[proc_macro_derive(GenValues, attributes(value, config))]
 pub fn values_attribute_macro(item: TokenStream) -> TokenStream {
     values::gen_values_attribute_impl(item)
+}
+
+#[proc_macro_derive(GenWhere, attributes(r#where, config))]
+pub fn where_attribute_macro(item: TokenStream) -> TokenStream {
+    where_macro::gen_where_attribute_impl(item)
 }

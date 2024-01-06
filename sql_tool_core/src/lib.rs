@@ -78,9 +78,9 @@ pub trait WhereAttributeMacro {
     /// 返回值是一个包含字段名称的 `String` 向量。
     /// 数据库选择为 Postgres 数据应返回为 ["field1 [condition] $1", "[condition_all]", "[rename] [condition] $3", "field4 [condtion] $[index]"]
     /// 数据库选择为 MySql 数据应返回为 ["field1 [condition] ?", "[condition_all]", "[rename] [condition] ?", "field4 [condtion] ?"]
-    fn generate_where_clause() -> Vec<String>;
+    fn generate_where_clause(&self) -> Vec<String>;
     /// 返回最终的索引号
-    fn last_param_index() -> usize;
+    fn last_param_index(&self) -> usize;
 }
 
 /// `SetAttributeMacro` trait 定义了处理字段属性宏的功能。
