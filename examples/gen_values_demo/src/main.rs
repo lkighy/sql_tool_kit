@@ -32,9 +32,6 @@ struct PostgresSetIndexStruct {
 
 fn main() {
     println!("MysqlStruct: {:?}", MysqlStruct::generate_values_clause()); // 输出：["?", "?"]
-    println!("len: {:?}", MysqlStruct::last_param_index());
     println!("{:?}", PostgresStruct::generate_values_clause()); // 输出：["$1", "$4"]
-    println!("len: {:?}", PostgresStruct::last_param_index());
     println!("{:?}", PostgresSetIndexStruct::generate_values_clause()); // 输出：["$5", "$6"]
-    println!("len: {:?}", PostgresSetIndexStruct::last_param_index());
 }

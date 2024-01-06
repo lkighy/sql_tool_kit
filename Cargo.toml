@@ -7,7 +7,9 @@ exclude = [
     "examples/gen_fields_demo",
     "examples/gen_select_demo",
     "examples/gen_values_demo",
-    "examples/gen_where_demo"
+    "examples/gen_where_demo",
+    "examples/gen_set_demo",
+    "examples/gen_all_demo"
     # 其他要排除的包
 ]
 resolver = "2"

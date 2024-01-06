@@ -59,9 +59,9 @@ pub trait ValuesAttributeMacro {
     /// 数据库选择为 Postgres 数据应返回为 ["$1", "$2", "$3", ...]
     /// 数据库选择为 MySql 数据应返回为 ["?", "?", ...]
     fn generate_values_clause() -> Vec<String>;
-    /// 根据 `generate_values_clause` 最终生成的列表，返回最后的占位符索引号
-    /// 例如 Postgres 中最末尾为 `$3`, 则此处应该返回 `3`
-    fn last_param_index() -> usize;
+    // /// 根据 `generate_values_clause` 最终生成的列表，返回最后的占位符索引号
+    // /// 例如 Postgres 中最末尾为 `$3`, 则此处应该返回 `3`
+    // fn last_param_index() -> usize;
 }
 
 /// `WhereAttributeMacro` trait 定义了处理字段属性宏的功能。
@@ -79,8 +79,8 @@ pub trait WhereAttributeMacro {
     /// 数据库选择为 Postgres 数据应返回为 ["field1 [condition] $1", "[condition_all]", "[rename] [condition] $3", "field4 [condtion] $[index]"]
     /// 数据库选择为 MySql 数据应返回为 ["field1 [condition] ?", "[condition_all]", "[rename] [condition] ?", "field4 [condtion] ?"]
     fn generate_where_clause(&self) -> Vec<String>;
-    /// 返回最终的索引号
-    fn last_param_index(&self) -> usize;
+    // /// 返回最终的索引号
+    // fn last_param_index(&self) -> usize;
 }
 
 /// `SetAttributeMacro` trait 定义了处理字段属性宏的功能。
@@ -96,17 +96,19 @@ pub trait SetAttributeMacro {
     ///
     /// 返回值是一个包含字段名称的 `String` 向量。
     /// 数据应返回为 ["field1 = $1", "field1 = $[2]", "[rename] = $3", ...]
-    fn generate_set_clause() -> Vec<String>;
-    /// 解析 `#[set(where = "{field} > {index}")]`, 并生成相应的条件列表。
-    /// 对应的使用方法有：
-    /// `where = "{field} > $1"`, 不存在index 则不进行替换
-    /// `where = "field4 > {index}"`, 只替换index
-    /// `where = "field4 NOT NULL"`, 不进行任何替换
-    ///
-    /// 返回值是一个包含条件的 `String` 向量。
-    /// 数据应返回为 ["field4 [where] $4", "rename [where] ${index}"]
-    /// 如果想要使用好的自定义方法，应该使用 `GenWhere` 宏， 并使用 `ignore` 忽略指定值
-    fn generate_where_clause() -> Vec<String>;
-    /// 返回最终的索引号
-    fn last_param_index() -> usize;
+    fn generate_set_clause(&self) -> Vec<String>;
+    // /// 解析 `#[set(where = "{name} > {index}")]`, 并生成相应的条件列表。
+    // /// 对应的使用方法有：
+    // /// `where = "{name} > $1"`, 不存在index 则不进行替换
+    // /// `where = "field > {index}"`, 只替换index
+    // /// `where = "field NOT NULL"`, 不进行任何替换
+    // ///
+    // /// 存在 where 参数时，该值将只会在 generate_where_clause 中存在
+    // ///
+    // /// 返回值是一个包含条件的 `String` 向量。
+    // /// 数据应返回为 ["field4 [where] $4", "rename [where] ${index}"]
+    // /// 如果想要使用好的自定义方法，应该使用 `GenWhere` 宏， 并使用 `ignore` 忽略指定值
+    // fn generate_where_clause(&self) -> Vec<String>;
+    // /// 返回最终的索引号
+    // fn last_param_index() -> usize;
 }

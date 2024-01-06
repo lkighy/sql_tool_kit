@@ -5,6 +5,7 @@ mod select;
 mod values;
 mod where_macro;
 mod macro_utils;
+mod set;
 
 /// 过程宏入口点，用于处理 `#[field(...)]` 属性宏。
 ///
@@ -132,7 +133,98 @@ pub fn values_attribute_macro(item: TokenStream) -> TokenStream {
     values::gen_values_attribute_impl(item)
 }
 
+
+
+/// `GenWhere` 派生宏
+///
+/// 用于生成 SQL `WHERE` 语句部分。此宏依赖于 `WhereAttributeMacro` trait。
+/// 使用方法 `where_data.generate_where_clause()` 会返回一个字段和条件组成的字符串数组。
+///
+/// 宏参数：
+/// - `#[config(...)]`: 设置全局配置。
+///   - `database`: 指定数据库类型，影响占位符格式（支持 postgres, mysql, sqlite, mariadb, mssql）。
+///   - `index`: 设置占位符的起始索引。
+///   - `ignore_none`: 是否忽略 `Option::None` 值，默认为 `true`。
+///   - `ignore_no_macro_where`: 是否忽略没有 `#[r#where(...)]` 宏的字段，默认值为 `true`, 为 `true` 时配合 `GenSet` 宏使用。
+///
+/// - `#[r#where(...)]`: 字段级别宏，用于自定义字段在 `WHERE` 语句中的表现。
+///   - `ignore`: 忽略该字段。
+///   - `rename`: 字段重命名，接受字符串类型。
+///   - `condition`: 指定字段的比较条件，默认值为 ”=“，如果该值设置为空及 "", 会报错。
+///   - `condition_all`: 应用于所有字段的通用条件，缺省值为 `"{name} {condition} {index}"`。
+///     - `{name}`: 字段名称或 `rename` 指定的名称。
+///     - `{condition}`: `condition` 参数指定的比较条件。如果 `condition_all`。
+///     - `{index}`: `index` 参数指定的占位符索引。如果字段未设置 `index`，则使用全局 `index`。
+///   - `ignore_none`: 当字段为 `Option::None` 时是否忽略，接受布尔类型。
+///   - `value`: 自定义字段的值，接受字符串类型。
+///   - `index`: 自定义占位符序号（如果数据库支持），接受整型。
+///
+/// 字段宏属性优先级：
+/// `ignore` > `ignore_none` > `condition_all` > `rename` = `condition` = `value` > `index`
+///
+/// 示例：
+/// ```rust
+/// #[derive(GenWhere, Debug)]
+/// #[config(database = "postgres")]
+/// pub struct WhereStruct {
+///     // 字段定义
+///     // ...
+/// }
+///
+/// fn main() {
+///     let data = WhereStruct {
+///         // 初始化字段
+///         // ...
+///     };
+///     println!("{:?}", data.generate_where_clause());
+/// }
+/// ```
 #[proc_macro_derive(GenWhere, attributes(r#where, config))]
 pub fn where_attribute_macro(item: TokenStream) -> TokenStream {
     where_macro::gen_where_attribute_impl(item)
+}
+
+/// `GenSet` 派生宏
+///
+/// 用于生成 SQL `UPDATE` 语句中的 `SET` 部分。它依赖于 `SetAttributeMacro` trait。
+/// 例如，`update table_name set field1 = $1, field2 = $2 ... where ...`
+/// 使用方法 `update_data.generate_set_clause()` 返回值类似于 `["field1 = $1", "field2 = $2", ...]`。
+///
+/// 宏参数：
+/// - `#[config(...)]`: 设置一些配置。
+///   - `database`: 指定数据库类型，影响占位符的格式（支持 mysql, postgres, sqlite, mariadb, mssql）。
+///   - `index`: 设置占位符的起始索引。
+///   - `ignore_none`: 是否忽略 `Option::None` 值，默认为 `true`。
+///   - `ignore_no_macro_set`: 默认忽略没有 `#[set(...)]` 宏的字段，为 `true` 时配合 `GenWhere` 宏使用。
+///
+/// - `#[set(...)]`: 字段级别的宏，用于自定义字段在生成的 `SET` 语句中的表现。
+///   - `ignore`: 忽略该字段。
+///   - `rename`: 字段重命名，接受字符串类型。
+///   - `ignore_none`: 当字段为 `Option::None` 时是否忽略，接受布尔类型。
+///   - `value`: 自定义字段的值，接受字符串类型。
+///   - `index`: 自定义占位符序号（如果数据库支持），接受整型。
+///
+/// 宏的优先级：`ignore` > `ignore_none` > `rename` = `value` > `index`
+///
+/// 示例：
+/// ```rust
+/// #[derive(GenSet, Debug)]
+/// #[config(database = "postgres", index = 4)]
+/// pub struct SetStruct {
+///     #[set(rename = "id")]
+///     pub field1: i32,
+///     // 其他字段...
+/// }
+///
+/// fn main() {
+///     let data = SetStruct {
+///         field1: 12,
+///         // 初始化其他字段...
+///     };
+///     println!("{:?}", data.generate_set_clause());
+/// }
+/// ```
+#[proc_macro_derive(GenSet, attributes(set, config))]
+pub fn set_attribute_macro(item: TokenStream) -> TokenStream {
+    set::gen_set_attribute_impl(item)
 }

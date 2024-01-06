@@ -164,9 +164,9 @@ pub fn gen_values_attribute_impl(item: TokenStream) -> TokenStream {
             fn generate_values_clause() -> Vec<String> {
                 vec![#(#values.to_string()),*]
             }
-            fn last_param_index() -> usize {
-                #index
-            }
+            // fn last_param_index() -> usize {
+            //     #index
+            // }
         }
     };
 
