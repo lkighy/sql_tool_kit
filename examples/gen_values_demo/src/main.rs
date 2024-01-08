@@ -1,5 +1,4 @@
-use sql_tool_core::ValuesAttributeMacro;
-use sql_tool_macros::GenValues;
+use sql_tool_kit::{ValuesAttributeMacro, GenValues};
 
 #[derive(GenValues)]
 #[config(database = "postgres")]

@@ -1,11 +1,11 @@
 use proc_macro::TokenStream;
 
 mod fields;
+mod macro_utils;
 mod select;
+mod set;
 mod values;
 mod where_macro;
-mod macro_utils;
-mod set;
 
 /// 过程宏入口点，用于处理 `#[field(...)]` 属性宏。
 ///
@@ -133,8 +133,6 @@ pub fn values_attribute_macro(item: TokenStream) -> TokenStream {
     values::gen_values_attribute_impl(item)
 }
 
-
-
 /// `GenWhere` 派生宏
 ///
 /// 用于生成 SQL `WHERE` 语句部分。此宏依赖于 `WhereAttributeMacro` trait。
@@ -207,21 +205,45 @@ pub fn where_attribute_macro(item: TokenStream) -> TokenStream {
 /// 宏的优先级：`ignore` > `ignore_none` > `rename` = `value` > `index`
 ///
 /// 示例：
+/// #[doc = "hidden"]
+/// #[cfg(test)]
 /// ```rust
 /// #[derive(GenSet, Debug)]
 /// #[config(database = "postgres", index = 4)]
 /// pub struct SetStruct {
 ///     #[set(rename = "id")]
 ///     pub field1: i32,
-///     // 其他字段...
+///     #[set()]
+///     pub field2: i32,
+///     #[set(rename = "email")]
+///     pub field3: Option<String>,
+///     #[set(value = "'用户名称'")] // 设置 field = '用户名称' 而不是 ${index}
+///     pub field4: String,
+///     #[set(index = 10)] // 设置当前字段的 索引
+///     pub field5: String,
+///     #[set()]
+///     pub field6: String,
 /// }
 ///
-/// fn main() {
+/// #[cfg(test)]
+/// fn set_macro_test() {
 ///     let data = SetStruct {
 ///         field1: 12,
 ///         // 初始化其他字段...
+///         field2: 0,
+///         field3: None, // 为 None 值会默认被忽略
+///         field4: "".to_string(),
+///         field5: "".to_string(),
+///         field6: "".to_string(),
 ///     };
-///     println!("{:?}", data.generate_set_clause());
+///     let set_values = vec![
+///         "id = $4".to_string(),
+///         "email = $5".to_string(),
+///         "field4 = '用户名称'".to_string(),
+///         "field5 = $10".to_string(),  // 自带的 index 不会影响接下来的序列
+///         "field6 = $8".to_string(), // 这里会是8是因为 field4 和 field5 会
+///     ];
+///     assert_eq!(set_values, data.generate_set_clause());
 /// }
 /// ```
 #[proc_macro_derive(GenSet, attributes(set, config))]

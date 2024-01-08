@@ -25,6 +25,14 @@ name = "sql_tool_core"
 version = "0.1.0"
 
 [[package]]
+name = "sql_tool_kit"
+version = "0.1.0"
+dependencies = [
+ "sql_tool_core",
+ "sql_tool_macros",
+]
+
+[[package]]
 name = "sql_tool_macros"
 version = "0.1.0"
 dependencies = [

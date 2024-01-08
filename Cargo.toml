@@ -3,6 +3,11 @@ members = [
     "sql_tool_macros",
     "sql_tool_core"
 ]
+[package]
+name = "sql_tool_kit"
+version = "0.1.0"
+edition = "2021"
+
 exclude = [
     "examples/gen_fields_demo",
     "examples/gen_select_demo",
@@ -13,3 +18,12 @@ exclude = [
     # 其他要排除的包
 ]
 resolver = "2"
+
+[dependencies]
+sql_tool_macros = { path = "sql_tool_macros" }
+sql_tool_core = { path = "sql_tool_core" }
+
+[profile.release]
+lto = true
+opt-level = 3
+codegen-units = 1

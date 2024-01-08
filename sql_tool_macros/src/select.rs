@@ -18,23 +18,6 @@ use syn::punctuated::Punctuated;
 /// # 返回值
 /// 返回一个 `TokenStream`，它包含了生成的 `SelectAttributeMacro` trait 实现。
 ///
-/// # 示例
-/// ```ignore
-/// use sql_tool_core::SelectAttributeMacro;
-///
-/// #[derive(GenSelect, Debug)]
-/// struct MyStruct {
-///     field1: i32,
-///     #[select(ignore)]
-///     field2: i32,
-///     #[select(rename = "NULL::varchar as city_name")]
-///     field3: i32,
-///     #[select(rename = "CASE WHEN f.follower_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_followed")]
-///     field4: bool,
-/// }
-///
-/// MyStruct::generate_fields_clause(); // 输出：["field1", "NULL::varchar as city_name", "CASE WHE..."]
-/// ```
 /// 此函数将为 `MyStruct` 生成相应的 `FieldsAttributeMacro` 实现。
 pub fn gen_select_attribute_impl(item: TokenStream) -> TokenStream {
     let input = parse_macro_input!(item as DeriveInput);

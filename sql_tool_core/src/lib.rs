@@ -111,4 +111,8 @@ pub trait SetAttributeMacro {
     // fn generate_where_clause(&self) -> Vec<String>;
     // /// 返回最终的索引号
     // fn last_param_index() -> usize;
+
+    /// 当存在 `#[set(where, ...)]` 或 `#[set(where = "..."), ...]`
+    /// 可以使用该方法返回包含 set 和 where 语句需要的数组的元组
+    fn generate_set_and_were_clause(&self) -> (Vec<String>, Vec<String>);
 }

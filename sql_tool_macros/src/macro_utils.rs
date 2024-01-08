@@ -1,3 +1,4 @@
+use syn::{Expr, Lit, MetaNameValue};
 
 /// 生成数据库特定的查询参数占位符模板。
 ///
@@ -27,4 +28,32 @@ pub fn generate_placeholder(database: &str) -> String {
         "mssql" => "@p{index}".to_string(),
         _ => panic!("未支持的数据库类型"),
     }
+}
+
+pub fn name_value_to_string(name_value: &MetaNameValue) -> Option<String> {
+    if let Expr::Lit(value) = &name_value.value {
+        if let Lit::Str(val) = &value.lit {
+            return Some(val.value());
+        }
+    }
+    None
+}
+
+pub fn name_value_to_bool(name_value: &MetaNameValue) -> Option<bool> {
+    if let Expr::Lit(value) = &name_value.value {
+        if let Lit::Bool(val) = &value.lit {
+            return Some(val.value());
+        }
+    }
+    None
+}
+
+pub fn from_name_value<T>(name_value: &MetaNameValue) -> Option<T>
+where
+    T: From<Lit>,
+{
+    if let Expr::Lit(value) = &name_value.value {
+        return Some(T::from(value.lit.clone()));
+    }
+    None
 }

@@ -4,6 +4,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, Data, DeriveInput, Expr, Lit, Meta, Token};
 
+use crate::macro_utils::from_name_value;
 use syn::punctuated::Punctuated;
 
 /// 生成针对特定结构体的 `ValuesAttributeMacro` 实现。
@@ -100,20 +101,23 @@ pub fn gen_values_attribute_impl(item: TokenStream) -> TokenStream {
                 panic!("database 值转换失败")
             }
             Meta::NameValue(name_value) if meta.path().is_ident("index") => {
-                if let Expr::Lit(value) = &name_value.value {
-                    if let Lit::Int(value) = &value.lit {
-                        index = value.base10_parse::<usize>().unwrap();
-                    }
+                if let Some(Lit::Int(value)) = &from_name_value(&name_value) {
+                    index = value.base10_parse::<usize>().unwrap();
                 }
             }
             _ => {}
         }
     }
 
+    if placeholder.is_empty() {
+        panic!("database 值必须设置");
+    }
+
     let values = if let Data::Struct(data_struct) = &input.data {
         let mut fields = Vec::new();
         for field in &data_struct.fields {
             let mut field_name = Some(placeholder.replace("{index}", &index.to_string()));
+            let mut add_index = 1;
             let attrs = field
                 .attrs
                 .iter()
@@ -135,11 +139,10 @@ pub fn gen_values_attribute_impl(item: TokenStream) -> TokenStream {
                             break;
                         }
                         Meta::NameValue(name_value) if meta.path().is_ident("index") => {
-                            if let Expr::Lit(value) = &name_value.value {
-                                if let Lit::Int(val) = &value.lit {
-                                    field_name =
-                                        Some(placeholder.replace("{index}", &val.to_string()))
-                                }
+                            if let Some(Lit::Int(value)) = &from_name_value(&name_value) {
+                                field_name =
+                                    Some(placeholder.replace("{index}", &value.to_string()));
+                                add_index = 0;
                             }
                         }
                         _ => {}
@@ -156,8 +159,6 @@ pub fn gen_values_attribute_impl(item: TokenStream) -> TokenStream {
     } else {
         Vec::new()
     };
-
-    index -= 1;
 
     let expanbded = quote! {
         impl ValuesAttributeMacro for #name {

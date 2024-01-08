@@ -5,8 +5,13 @@
       <sourceFolder url="file://$MODULE_DIR$/sql_tool_core/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/sql_tool_macros/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/examples/gen_fields_demo/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/examples/gen_all_demo/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/sql_tool_macros/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/examples/gen_fields_demo/target" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
+      <excludeFolder url="file://$MODULE_DIR$/examples/gen_all_demo/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

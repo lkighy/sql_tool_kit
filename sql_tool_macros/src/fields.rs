@@ -18,21 +18,6 @@ use syn::punctuated::Punctuated;
 /// # 返回值
 /// 返回一个 `TokenStream`，它包含了生成的 `FieldsAttributeMacro` trait 实现。
 ///
-/// # 示例
-/// ```ignore
-/// use sql_tool_core::FieldsAttributeMacro;
-///
-/// #[derive(GenFields, Debug)]
-/// struct MyStruct {
-///     field1: i32,
-///     #[fields(ignore)]
-///     field2: i32,
-///     #[fields(rename = "rename_field")]
-///     field3: i32,
-/// }
-///
-/// MyStruct::generate_fields_clause(); // 输出：["field1", "rename_field"]
-/// ```
 /// 此函数将为 `MyStruct` 生成相应的 `FieldsAttributeMacro` 实现。
 pub fn gen_fields_attribute_impl(item: TokenStream) -> TokenStream {
     let input = parse_macro_input!(item as DeriveInput);
