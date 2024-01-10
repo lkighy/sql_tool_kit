@@ -12,7 +12,7 @@ authors = ["lkighy"]
 proc-macro2 = "1.0.71"
 quote = "1.0.33"
 syn = "2.0.43"
-sql_tool_core = { path = "../sql_tool_core" }
+sql_tool_core = "0.1.0"
 
 [lib]
 proc-macro = true
