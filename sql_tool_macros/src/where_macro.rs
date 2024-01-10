@@ -255,6 +255,19 @@ pub fn gen_where_attribute_impl(item: TokenStream) -> TokenStream {
                 )*
                 fields
             }
+            fn generate_where_clause_with_index(&self, index: usize) -> Vec<String> {
+                let mut fields = Vec::new();
+                let mut index = index;
+                #(
+                    // 使用 values 中的每个 TokenStream
+                    if let (Some(value), add_index) = #values {
+                        let value = value.replace("{index}", &index.to_string());
+                        index = index + add_index;
+                        fields.push(value);
+                    }
+                )*
+                fields
+            }
             // fn last_param_index(&self) -> usize {
             //     #index
             // }

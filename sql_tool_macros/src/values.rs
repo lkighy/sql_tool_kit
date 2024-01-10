@@ -4,7 +4,7 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, Data, DeriveInput, Expr, Lit, Meta, Token};
 
-use crate::macro_utils::from_name_value;
+use crate::macro_utils::{from_name_value, name_value_to_string};
 use syn::punctuated::Punctuated;
 
 /// 生成针对特定结构体的 `ValuesAttributeMacro` 实现。
@@ -117,6 +117,7 @@ pub fn gen_values_attribute_impl(item: TokenStream) -> TokenStream {
         let mut fields = Vec::new();
         for field in &data_struct.fields {
             let mut field_name = Some(placeholder.replace("{index}", &index.to_string()));
+            let mut value_placeholder = None;
             let mut add_index = 1;
             let attrs = field
                 .attrs
@@ -145,13 +146,22 @@ pub fn gen_values_attribute_impl(item: TokenStream) -> TokenStream {
                                 add_index = 0;
                             }
                         }
+                        Meta::NameValue(name_value) if meta.path().is_ident("value") => {
+                            if let Some(value) = name_value_to_string(&name_value) {
+                                value_placeholder = Some(value)
+                            }
+                        }
                         _ => {}
                     }
                 }
             }
+            if let Some(ref value) = value_placeholder {
+                fields.push(value.clone());
+                continue;
+            }
             if let Some(value) = field_name {
                 fields.push(value);
-                index += 1;
+                index += add_index;
             }
         }
 

@@ -284,7 +284,7 @@ pub fn gen_set_attribute_impl(item: TokenStream) -> TokenStream {
                 )*
                 fields
             }
-            fn generate_set_and_were_clause(&self) -> (Vec<String>, Vec<String>) {
+            fn generate_set_and_where_clause(&self) -> (Vec<String>, Vec<String>) {
                 let mut set_data = Vec::new();
                 let mut where_data = Vec::new();
                 let mut index = #index;

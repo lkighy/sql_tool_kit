@@ -13,8 +13,9 @@ mod where_macro;
 /// trait 的实现。这允许在结构体字段级别上定义如何处理 SQL 字段，例如忽略某些字段，
 /// 或将字段重命名。
 ///
-/// # 参数
-/// * `item`: TokenStream，表示传入的 Rust 代码项，通常是结构体定义。
+/// 字段宏参数：
+/// - `ignore` - 忽略该字段
+/// - `rename` - 字段重命名
 ///
 /// # 返回值
 /// 返回 TokenStream，包含了生成的 trait 实现代码。
@@ -45,8 +46,9 @@ pub fn fields_attribute_macro(item: TokenStream) -> TokenStream {
 /// trait 的实现。这允许在结构体字段级别上定义如何处理 SQL 字段，例如忽略某些字段，
 /// 或将字段重命名。
 ///
-/// # 参数
-/// * `item`: TokenStream，表示传入的 Rust 代码项，通常是结构体定义。
+/// 字段宏参数：
+/// - `ignore` - 忽略该字段
+/// - `rename` - 字段重命名
 ///
 /// # 返回值
 /// 返回 TokenStream，包含了生成的 trait 实现代码。
@@ -82,8 +84,16 @@ pub fn select_attribute_macro(item: TokenStream) -> TokenStream {
 ///
 /// 目前支持的数据库有："postgres", "mariadb", "mysql", "sqlite", "mssql"
 ///
-/// # 参数
-/// * `item`: TokenStream，表示要处理的 Rust 代码项（一般是结构体定义）。
+/// 宏参数：
+/// - `#[config(...)]`: 设置全局配置。
+///   - `database` - 指定生成的数据库类型，目前支持 `postgresql` `mysql` `mariadb` `sqlite` `mssql`
+///   - `index` - 指定开始的序列，仅 `postgresql` `mssql` 上有效
+///
+/// `#[value(...)]` 接受的参数：
+/// - `ignore` - 忽略该字段
+///   - `index` - 设置当前值的index，当设置了这个参数后，全局的 index 不会加一
+///   - `value` - 直接替换当前的 `${index}` ，当设置了这个参数后，全局的 index 不会加一
+///       - 例如：`#[value(value = "true")]` => ["$1", "true",...]
 ///
 /// # 返回值
 /// 返回一个 `TokenStream`，它包含了生成的 `FieldsAttributeMacro` trait 实现。
@@ -194,15 +204,19 @@ pub fn where_attribute_macro(item: TokenStream) -> TokenStream {
 ///   - `index`: 设置占位符的起始索引。
 ///   - `ignore_none`: 是否忽略 `Option::None` 值，默认为 `true`。
 ///   - `ignore_no_macro_set`: 默认忽略没有 `#[set(...)]` 宏的字段，为 `true` 时配合 `GenWhere` 宏使用。
+///   - `ignore_set_and_where`: 当 `#[set(...)]`存在 `where` 参数是，会忽略 `set` 值，默认为 `false`
 ///
 /// - `#[set(...)]`: 字段级别的宏，用于自定义字段在生成的 `SET` 语句中的表现。
 ///   - `ignore`: 忽略该字段。
-///   - `rename`: 字段重命名，接受字符串类型。
+///   - `r#where`: 将该字段设置为 where，有多种使用方式。1. `#[set(r#where)]` `#[set(r#where = "{field = {index}")]`
 ///   - `ignore_none`: 当字段为 `Option::None` 时是否忽略，接受布尔类型。
+///   - `ignore_set`: 在 set 上忽略该字段。
+///   - `rename`: 字段重命名，接受字符串类型。
+///   - `condition`: 当设置 `r#where` 时生效
 ///   - `value`: 自定义字段的值，接受字符串类型。
 ///   - `index`: 自定义占位符序号（如果数据库支持），接受整型。
-///
-/// 宏的优先级：`ignore` > `ignore_none` > `rename` = `value` > `index`
+//
+/// 宏的优先级：`ignore` > `ignore_none` > `r#where` = `ignore_set` > `rename` = `value` = `condition` > `index`
 ///
 /// 示例：
 /// #[doc = "hidden"]

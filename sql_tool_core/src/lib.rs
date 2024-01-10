@@ -81,6 +81,7 @@ pub trait WhereAttributeMacro {
     fn generate_where_clause(&self) -> Vec<String>;
     // /// 返回最终的索引号
     // fn last_param_index(&self) -> usize;
+    fn generate_where_clause_with_index(&self, index: usize) -> Vec<String>;
 }
 
 /// `SetAttributeMacro` trait 定义了处理字段属性宏的功能。
@@ -114,5 +115,5 @@ pub trait SetAttributeMacro {
 
     /// 当存在 `#[set(where, ...)]` 或 `#[set(where = "..."), ...]`
     /// 可以使用该方法返回包含 set 和 where 语句需要的数组的元组
-    fn generate_set_and_were_clause(&self) -> (Vec<String>, Vec<String>);
+    fn generate_set_and_where_clause(&self) -> (Vec<String>, Vec<String>);
 }
