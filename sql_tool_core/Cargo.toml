@@ -2,6 +2,9 @@
 name = "sql_tool_core"
 version = "0.1.0"
 edition = "2021"
+description = "这个库是 sql_tool_macros 库的核心，存储 trait"
+license = "MIT"
+authors = ["lkighy"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
