@@ -153,9 +153,9 @@ pub fn gen_values_attribute_impl(item: TokenStream) -> TokenStream {
                                         "{index}",
                                         &placeholder.replace("{index}", &index.to_string()),
                                     ));
-                                    add_index = 0;
                                 } else {
                                     value_placeholder = Some(value);
+                                    add_index = 0;
                                 }
                             }
                         }
@@ -163,11 +163,10 @@ pub fn gen_values_attribute_impl(item: TokenStream) -> TokenStream {
                     }
                 }
             }
-            if let Some(ref value) = value_placeholder {
-                fields.push(value.clone());
-                continue;
-            }
-            if let Some(value) = field_name {
+            if let Some(value) = value_placeholder {
+                fields.push(value);
+                index += add_index;
+            } else if let Some(value) = field_name {
                 fields.push(value);
                 index += add_index;
             }

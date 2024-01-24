@@ -35,24 +35,12 @@ name = "sql_tool_kit"
 version = "0.1.1"
 dependencies = [
  "sql_tool_core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "sql_tool_macros 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sql_tool_macros",
 ]
 
 [[package]]
 name = "sql_tool_macros"
 version = "0.1.1"
-dependencies = [
- "proc-macro2",
- "quote",
- "sql_tool_core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "syn",
-]
-
-[[package]]
-name = "sql_tool_macros"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c0fa082ad5f6ef770f75885ff548159d2c2f53abdc96cf35d5a68a3cf0970946"
 dependencies = [
  "proc-macro2",
  "quote",
