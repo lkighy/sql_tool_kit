@@ -5,7 +5,7 @@ members = [
 ]
 [package]
 name = "sql_tool_kit"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["lkighy"]
 description = "合并 sql_tool_core 和 sql_tool_macros 并一起导出，后续新增的功能都将从这个库中导出"
