@@ -23,7 +23,7 @@ exclude = [
 resolver = "2"
 
 [dependencies]
-sql_tool_macros = "0.1.0"
+sql_tool_macros = "0.1.1"
 sql_tool_core = "0.1.0"
 
 [profile.release]
