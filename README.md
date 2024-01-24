@@ -79,8 +79,11 @@ pub struct ValuesStruct {
   field2: i32,
   #[value(value = "20")]
   field3: i32,
+  #[value(value = "{index}::bit(4)")]
+  field4: i32,
 }
-ValuesStruct::generate_values_clause(); // 输出：["$2", "20"]
+
+ValuesStruct::generate_values_clause(); // 输出：["$2", "20", "$1::bit(4)"]
 ```
 
 ### `#[derive(GenWhere)]`
@@ -88,6 +91,34 @@ ValuesStruct::generate_values_clause(); // 输出：["$2", "20"]
 用于生成 SQL `WHERE` 语句部分。此宏依赖于 `WhereAttributeMacro` trait。
 使用方法 `where_data.generate_where_clause()` 会返回一个字段和条件组成的字符串数组。
 使用方法 `where_data.generate_where_clause_with_index(index)` 可以设置开始初始的 index 值。
+
+使用方式
+
+```rust
+use sql_tool_kit::{GenWhere, WhereAttributeMacro};
+
+#[derive(GenWhere)]
+#[config(database = "postgres")]
+pub struct WhereStruct {
+  #[r#where()]
+  field1: i32,
+  field2: i32,
+  #[r#where(rename = "rename_filed")]
+  field3: i32,
+  #[r#where(condition = ">=")]
+  field4: i32,
+  #[r#where(condition_all = "{name} not null")]
+  field5: i32,
+  #[r#where(value = "{index}::bit(4)")]
+  field6: i32,
+  #[r#where(index = 1)]
+  field7: i32,
+}
+
+let data = WhereStruct { ... };
+
+data.generate_where_clause(); // 输出：["field1 = $1", "rename_field = $2", "field4 >= $3", "field5 not null", "field5 = $4::bit(4)", "field7 = $1"]
+```
 
 宏参数：
 - `#[config(...)]`: 设置全局配置。
@@ -119,6 +150,38 @@ ValuesStruct::generate_values_clause(); // 输出：["$2", "20"]
 为了方便接入后续的 where 语句，在 `#[set(...)]` 添加了 `where` 参数，它可以为 `where` 或 `where = "..."`
 通过方法 `generate_set_and_where_clause()` 返回值一个元组 `(["field1 = $1", ...], ["field5 = $5", "field6 > $6", ...])`,
 第一个为 set 的值，第二个为 where 的值
+
+使用方式
+
+```rust
+use sql_tool_kit::{GenSet, SetAttributeMacro};
+
+#[derive(GenSet)]
+#[config(database = "postgres")]
+pub struct SetStruct {
+
+  #[set(r#where)]
+  pub id: i32,
+  pub title: Option<String>,
+  pub subtitle: Option<String>,
+  pub image_url: Option<String>,
+  pub link_url: Option<String>,
+  pub description: Option<String>,
+  #[set(value = "now()")]
+  pub updated_at: Option<()>,
+}
+
+let data = UpdateForm {
+  id: 1,
+  title: Some("这是标题".to_string()),
+  subtitle: None,
+  image_url: None,
+  link_url: None,
+  description: Some("这是描述".to_string()),
+  updated_at: Some(()),
+};
+let (set_values, where_value) = data.generate_set_and_where_clause(); // ["title = $1", "description = $2", "updated_at = now()"]
+```
 
 宏参数：
 - `#[config(...)]`: 设置一些配置。
