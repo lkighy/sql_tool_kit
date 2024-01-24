@@ -148,7 +148,15 @@ pub fn gen_values_attribute_impl(item: TokenStream) -> TokenStream {
                         }
                         Meta::NameValue(name_value) if meta.path().is_ident("value") => {
                             if let Some(value) = name_value_to_string(&name_value) {
-                                value_placeholder = Some(value)
+                                if value.contains("{index}") {
+                                    value_placeholder = Some(value.replace(
+                                        "{index}",
+                                        &placeholder.replace("{index}", &index.to_string()),
+                                    ));
+                                    add_index = 0;
+                                } else {
+                                    value_placeholder = Some(value);
+                                }
                             }
                         }
                         _ => {}

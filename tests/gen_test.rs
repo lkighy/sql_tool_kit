@@ -64,6 +64,8 @@ pub struct PgValuesStructIndex {
     pub email: String,
     #[value(value = "'这是描述'")]
     pub description: Option<String>,
+    #[value(value = "{index}::bit(4)")]
+    pub user_type: i32,
 }
 
 #[cfg(test)]
@@ -108,6 +110,7 @@ fn values_test() {
         "$4".to_string(),
         "$2".to_string(),
         "'这是描述'".to_string(),
+        "$5::bit(4)".to_string(),
     ];
     assert_eq!(data, PgValuesStructIndex::generate_values_clause());
     let data = vec![
