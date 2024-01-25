@@ -32,7 +32,7 @@ checksum = "5bd90bde4b6aeacc3d54605bf98dfa0c1e5a570cf92f49c89d69a17a83d8975a"
 
 [[package]]
 name = "sql_tool_kit"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "sql_tool_core 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "sql_tool_macros",
@@ -40,7 +40,7 @@ dependencies = [
 
 [[package]]
 name = "sql_tool_macros"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "proc-macro2",
  "quote",

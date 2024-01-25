@@ -267,6 +267,9 @@ pub struct PgSetAndWhereStruct {
     pub description: Option<String>,
     #[set(value = "now()")]
     pub updated_at: Option<()>,
+    #[set(value = "{index}::bit(4)")]
+    pub user_type: i32,
+    pub identifier: i32,
 }
 
 #[derive(GenSet)]
@@ -296,13 +299,17 @@ fn set_test() {
         link_url: None,
         description: Some("这是描述".to_string()),
         updated_at: Some(()),
+        user_type: 1,
+        identifier: 1,
     };
     let set_data = vec![
         "title = $1".to_string(),
         "description = $2".to_string(),
         "updated_at = now()".to_string(),
+        "user_type = $3::bit(4)".to_string(),
+        "identifier = $4".to_string(),
     ];
-    let where_data = vec!["id = $3".to_string()];
+    let where_data = vec!["id = $5".to_string()];
     let (set_value, where_value) = value.generate_set_and_where_clause();
 
     assert_eq!(set_data, set_value);
@@ -320,7 +327,7 @@ fn set_test() {
         "id = $1".to_string(),
         "url = $2".to_string(),
         "link_url = ''".to_string(),
-        "description = $4".to_string(),
+        "description = $3".to_string(),
         "updated_at = now()".to_string(),
     ];
     assert_eq!(set_data, value.generate_set_clause());

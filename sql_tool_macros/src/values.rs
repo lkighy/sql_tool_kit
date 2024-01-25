@@ -177,7 +177,7 @@ pub fn gen_values_attribute_impl(item: TokenStream) -> TokenStream {
         Vec::new()
     };
 
-    let expanbded = quote! {
+    let expanded = quote! {
         impl ValuesAttributeMacro for #name {
             fn generate_values_clause() -> Vec<String> {
                 vec![#(#values.to_string()),*]
@@ -188,5 +188,5 @@ pub fn gen_values_attribute_impl(item: TokenStream) -> TokenStream {
         }
     };
 
-    TokenStream::from(expanbded)
+    TokenStream::from(expanded)
 }

@@ -82,7 +82,6 @@ pub fn gen_set_attribute_impl(item: TokenStream) -> TokenStream {
             let mut condition = "=".to_string();
             let mut value_placeholder = String::new();
             let mut field_index = -1;
-            let mut add_index: usize = 0;
 
             let attrs = field.attrs.iter().find(|attr| attr.path().is_ident("set"));
 
@@ -154,18 +153,9 @@ pub fn gen_set_attribute_impl(item: TokenStream) -> TokenStream {
                     };
                     field = field.replace("{name}", name_to_use);
 
-                    // 替换 {index} 和 {value}
-                    let index_str = if field_index != -1 {
-                        field_index.to_string()
-                    } else {
-                        "{index}".to_string()
-                    };
-                    let placeholder_str = if value_placeholder.is_empty() {
-                        placeholder.replace("{index}", &index_str)
-                    } else {
-                        value_placeholder.clone()
-                    };
-                    field = field.replace("{index}", &placeholder_str);
+                    if !value_placeholder.is_empty() {
+                        field = field.replace("{index}", &value_placeholder);
+                    }
 
                     set_value = Some(field);
                 }
@@ -179,37 +169,28 @@ pub fn gen_set_attribute_impl(item: TokenStream) -> TokenStream {
 
                     field = field.replace("{condition}", &condition);
 
-                    // 替换 {index} 和 {value}
-                    let index_str = if field_index != -1 {
-                        field_index.to_string()
-                    } else {
-                        "{index}".to_string()
-                    };
-
-                    let placeholder_str = if value_placeholder.is_empty() {
-                        placeholder.replace("{index}", &index_str)
-                    } else {
-                        value_placeholder.clone()
-                    };
-                    field = field.replace("{index}", &placeholder_str);
+                    if !value_placeholder.is_empty() {
+                        field = field.replace("{index}", &value_placeholder);
+                    }
 
                     where_value = Some(field);
                 }
             } else {
                 if let (false, Some(mut value)) = (ignore_no_macro_set, set_value.clone()) {
                     value = value.replace("{name}", &field_name);
-                    value = value.replace("{index}", &placeholder.replace("{index}", "{index}"));
                     set_value = Some(value);
                 } else {
                     set_value = None;
                 }
             }
 
-            if field_index == -1 && value_placeholder.is_empty() {
-                add_index = 1;
-            }
-
             if let Some(value) = set_value {
+                let value = value.replace("{index}", &placeholder.replace("{index}", "{index}"));
+                let add_index: usize = if field_index == -1 && value.contains("{index}") {
+                    1
+                } else {
+                    0
+                };
                 let get_data = if let Type::Path(type_path) = &field.ty {
                     if ignore_none
                         && type_path
@@ -235,11 +216,12 @@ pub fn gen_set_attribute_impl(item: TokenStream) -> TokenStream {
             }
 
             if let Some(value) = where_value {
-                if field_index == -1 && value_placeholder.is_empty() && value.contains("{index}") {
-                    add_index = 1;
+                let value = value.replace("{index}", &placeholder.replace("{index}", "{index}"));
+                let add_index: usize = if field_index == -1 && value.contains("{index}") {
+                    1
                 } else {
-                    add_index = 0;
-                }
+                    0
+                };
                 let get_data = if let Type::Path(type_path) = &field.ty {
                     if ignore_none
                         && type_path
